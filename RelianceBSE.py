@@ -1,47 +1,51 @@
 from flask import Flask, render_template
-import pandas as pd
-from matplotlib import pyplot as plt
-#import sqlite3
 from os import system
+from matplotlib import pyplot as plt
+import pyodbc
+
 app = Flask(__name__)
-
-plt.style.use('seaborn')
-
-"""df = pd.read_csv('F:\\Office task\\web app task\\BSE-BOM500325.csv')
-df.head(100)"""
-
-@app.route('/plot')
-def show_data():
-  import pyodbc
-  try:
+try:
         conn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-HRFT6U5;'
-                      'Database=RelianceIndustries;'
-                      'Trusted_Connection=yes;')
+                'Server=DESKTOP-HRFT6U5;'
+                'Database=RelianceIndustries;'
+                'Trusted_Connection=yes;')
         print('+=========================+')
         print('|  CONNECTED TO DATABASE  |')
         print('+=========================+')
-  except Exception as e:
+        mycursor=conn.cursor()
+except Exception as e:
         system.exit('error',e)
-   
-cursor=conn.cursor()
-cursor.execute ('SELECT [Date],[Close] FROM [RelianceIndustries].[dbo].[BSE-BOM500325]')
-result = cursor.fetchall()
+        
+@app.route('/')
+def show_index():
+ return render_template('index.html')
 
-df = pd.DataFrame(result, columns = ['Date','Close'])
-print (df)
-          
-                    
+@app.route('/display')
+def show_Reliance_data():  
+   mycursor.execute ('SELECT TOP (100) [Date],[Open],[High],[Low],[Close],[WAP],[No  of Shares],[No  of Trades],[Total Turnover],[Deliverable Quantity],[% Deli  Qty to Traded Qty],[Spread H-L],[Spread C-O] FROM [RelianceIndustries].[dbo].[BSE-BOM500325]')
+   result = mycursor.fetchall()
+   return render_template('displayData.html', result=result)   
 
-#conn.commit()
-x = df['Date']
-y = df['Close']
+@app.route('/showGraph')
+def show_graph():
+        #print('Inside graph')     
+        mycursor.execute ('SELECT TOP (5) [Date],[Close] FROM [RelianceIndustries].[dbo].[BSE-BOM500325]')
+        result =mycursor.fetchall()
+        Date = []
+        Close = []
+        for i in result:
+                Date.append(i[0])
+                Close.append(i[1]) 
 
-plt.plot(x,y) 
+        # Visulizing Data using Matplotlib
+        plt.bar(Date, Close)
+        plt.ylim(0, 5)
+        plt.xlabel("Date")
+        plt.ylabel("Close")
+        plt.title("Close v/s Date")
+        plt.show()
+        return      
 
-plt.title('Close Date vs ')       #(title of the plot)
-plt.xlabel('Date')                #(lable for x-axis)
-plt.ylabel('Close')               #(lable for y-axis)
+if __name__ == '__main__':
+   app.run(debug=True,port=5001)
 
-plt.tight_layout()
-plt.show()
