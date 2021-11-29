@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>RelianceIndustries</title>
+    <h1 align="center">RelianceIndustries LTD.EOD Prices</h1>
+  </head>
+  <body>
+    <table border="1" align="center">
+      <thead style="background-color: powderblue">
+        <tr>
+          <th>Date</th>
+          <th>Open</th>
+          <th>High</th>
+          <th>Low</th>
+          <th>Close</th>
+          <th>WAP</th>
+          <th>No of Shares</th>
+          <th>No of Trades</th>
+          <th>Total Turnover</th>
+          <th>Deliverable Quantity</th>
+          <th>% Deli Qty to Traded Qty</th>
+          <th>Spread H-L</th>
+          <th>Spread C-O</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for col in result %}
+        <tr>
+          <td>{{col[0]}}</td>
+          <td>{{col[1]}}</td>
+          <td>{{col[2]}}</td>
+          <td>{{col[3]}}</td>
+          <td>{{col[4]}}</td>
+          <td>{{col[5]}}</td>
+          <td>{{col[6]}}</td>
+          <td>{{col[7]}}</td>
+          <td>{{col[8]}}</td>
+          <td>{{col[9]}}</td>
+          <td>{{col[10]}}</td>
+          <td>{{col[11]}}</td>
+          <td>{{col[12]}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <br />
+    <div class="Center" align="center">
+      <p><a href="/showGraph">Display Graph</a></p>
+      
+    </div>
+  </body>
+</html>
+
